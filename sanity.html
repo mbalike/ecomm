@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sanicare — Sanitary Ware Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<style>
+  :root{
+    --brand: #0ea5a3;          /* teal */
+    --brand-2:#0d6efd;         /* accent */
+    --ink: #0f172a;            /* slate-900 */
+    --muted:#6b7280;
+    --bg:#f7fbfb;
+    --card:#ffffff;
+    --ring:#b2f1f0;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+  a{color:var(--brand-2);text-decoration:none}
+  .container{max-width:1100px;margin:auto;padding:0 20px}
+  header{
+    position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid #eef2f2;
+    backdrop-filter:saturate(180%) blur(8px)
+  }
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;height:64px
+  }
+  .brand{display:flex;gap:10px;align-items:center;font-weight:800}
+  .brand .logo{
+    width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--brand),#34d399);
+    display:grid;place-items:center;color:#fff;font-weight:900;box-shadow:0 6px 20px rgba(14,165,163,.35)
+  }
+  .nav a{margin-left:18px;color:#111827}
+  .btn{
+    display:inline-flex;gap:8px;align-items:center;justify-content:center;
+    padding:10px 14px;border-radius:10px;border:1px solid transparent;font-weight:600;cursor:pointer
+  }
+  .btn-primary{background:var(--brand);color:#fff}
+  .btn-outline{border-color:var(--brand);color:var(--brand);background:#fff}
+  .btn-muted{background:#f3f4f6;color:#111827}
+  .grid{display:grid;gap:20px}
+  .hero{padding:40px 0 24px;background:
+        radial-gradient(1200px 400px at 60% -10%, #e6fffe 10%, transparent 45%),
+        linear-gradient(180deg,#fff, #f9ffff 50%, #f4fffe)}
+  .hero-wrap{display:grid;grid-template-columns:1.2fr 1fr;gap:28px;align-items:center}
+  .hero h1{font-size:40px;line-height:1.1;margin:6px 0 12px}
+  .hero p{color:#334155;font-size:16px}
+  .card{
+    background:var(--card);border:1px solid #eef5f5;border-radius:14px;padding:16px;
+    box-shadow:0 10px 24px rgba(17,24,39,.06)
+  }
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .input{
+    width:100%;padding:12px 12px;border-radius:10px;border:1px solid #e5e7eb;background:#fff
+  }
+  .input:focus{outline:none;box-shadow:0 0 0 4px var(--ring);border-color:var(--brand)}
+  .section{padding:28px 0}
+  .section h2{font-size:26px;margin:0 0 6px}
+  .muted{color:var(--muted)}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin:10px 0 16px}
+  .search{flex:1;min-width:220px}
+  .catalog{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .product{display:flex;flex-direction:column}
+  .thumb{
+    aspect-ratio: 4/3;border-radius:12px;background:#f1f5f9;display:grid;place-items:center;overflow:hidden;
+    border:1px solid #eef2f2
+  }
+  .thumb img{width:100%;height:100%;object-fit:cover}
+  .title{font-weight:700;margin-top:10px}
+  .price{color:#0f766e;font-weight:700}
+  .qty{display:flex;gap:8px;align-items:center}
+  .pill{padding:6px 10px;border-radius:20px;background:#f1f5f9;color:#0f172a;font-size:12px}
+  .mini{font-size:12px;color:#475569}
+  /* cart drawer */
+  .drawer{position:fixed;top:0;right:-440px;width:380px;height:100vh;background:#fff;border-left:1px solid #e5e7eb;
+    box-shadow:-10px 0 30px rgba(0,0,0,.08);transition:right .28s ease;z-index:50;display:flex;flex-direction:column}
+  .drawer.open{right:0}
+  .drawer header{position:sticky;top:0;border-bottom:1px solid #eef2f2}
+  .drawer .content{padding:16px;overflow:auto;flex:1}
+  .cart-line{display:grid;grid-template-columns:64px 1fr auto;gap:10px;align-items:center;margin-bottom:12px}
+  .cart-line img{width:64px;height:48px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb}
+  .checkout{border-top:1px solid #eef2f2;padding:12px;display:grid;gap:10px}
+  .tag{font-size:12px;background:#ecfeff;color:#0e7490;padding:4px 8px;border-radius:999px;border:1px solid #a5f3fc;width:max-content}
+  /* chat */
+  .chatfab{
+    position:fixed;right:18px;bottom:18px;border-radius:999px;background:var(--brand);color:#fff;width:54px;height:54px;
+    display:grid;place-items:center;box-shadow:0 12px 26px rgba(14,165,163,.35);z-index:40;cursor:pointer
+  }
+  .chatbox{
+    position:fixed;right:18px;bottom:84px;width:320px;background:#fff;border:1px solid #e5e7eb;border-radius:16px;
+    box-shadow:0 20px 50px rgba(2,6,23,.15);display:none;overflow:hidden;z-index:45
+  }
+  .chatbox.open{display:grid;grid-template-rows:auto 1fr auto}
+  .chat-head{padding:12px 14px;background:linear-gradient(90deg,var(--brand),#22c6bd);color:#fff;font-weight:700}
+  .msgs{max-height:280px;overflow:auto;padding:10px 12px;display:grid;gap:8px;background:#f8ffff}
+  .bubble{padding:8px 10px;border-radius:12px;max-width:80%}
+  .me{justify-self:end;background:#e0fbfa}
+  .them{justify-self:start;background:#fff;border:1px solid #e2e8f0}
+  .chat-input{display:flex;gap:8px;padding:10px;border-top:1px solid #e5e7eb}
+  .chat-input input{flex:1}
+  /* contact & faq */
+  .faq{display:grid;gap:10px}
+  details{background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:10px}
+  summary{cursor:pointer;font-weight:600}
+  /* admin modal (very simple) */
+  .modal{
+    position:fixed;inset:0;background:rgba(2,6,23,.45);display:none;place-items:center;z-index:60
+  }
+  .modal.open{display:grid}
+  .modal .sheet{width:min(800px,92vw);max-height:80vh;overflow:auto;background:#fff;border-radius:16px;border:1px solid #e5e7eb;padding:16px}
+  .table{width:100%;border-collapse:collapse}
+  .table th,.table td{border-bottom:1px solid #eef2f2;padding:8px;text-align:left}
+  footer{padding:24px 0;color:#64748b}
+  /* responsive */
+  @media (max-width: 960px){
+    .hero-wrap{grid-template-columns:1fr}
+    .catalog{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width: 520px){
+    .catalog{grid-template-columns:1fr}
+    .form-row{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <div class="brand">
+      <div class="logo"><i class="bi bi-droplet-half"></i></div>
+      <div>Sanicare <span class="pill">Demo</span></div>
+    </div>
+    <nav>
+      <a href="#lead">Lead Form</a>
+      <a href="#shop">Shop</a>
+      <a href="#checkout">Checkout</a>
+      <a href="#contact">Contact</a>
+      <a href="#" id="openAdmin"><i class="bi bi-speedometer2"></i> Admin</a>
+      <button class="btn btn-outline" id="openCart"><i class="bi bi-bag"></i> Cart</button>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" id="lead">
+  <div class="container hero-wrap">
+    <div>
+      <span class="tag"><i class="bi bi-lightning-charge"></i> Quick demo • front-end only</span>
+      <h1>Sanitary-ware shopping, <span style="color:var(--brand)">with fundi support</span> & easy checkout</h1>
+      <p>Collect customer leads, showcase products, chat, and guide checkout with <b>Selcom (mock)</b>. Perfect for a stakeholder preview.</p>
+      <div class="card">
+        <h3 style="margin:4px 0 10px">Lead Form — Jaza taarifa zako</h3>
+        <div class="grid" style="gap:10px">
+          <input class="input" id="f_name" placeholder="Jina">
+          <div class="form-row">
+            <input class="input" id="f_phone" placeholder="Namba ya simu (WhatsApp)">
+            <input class="input" id="f_email" placeholder="Email">
+          </div>
+          <div class="form-row">
+            <input class="input" id="f_location" placeholder="Eneo la ujenzi wako">
+            <input class="input" id="f_bath" placeholder="Idadi ya bafu/choo">
+          </div>
+          <button class="btn btn-primary" id="saveLead"><i class="bi bi-check2-circle"></i> Hifadhi Taarifa</button>
+          <div class="mini" id="leadMsg"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="1.jpg" alt="bath" style="width:100%;border-radius:10px">
+      <div class="mini" style="margin-top:8px">
+        Demo image • Products below are dummy data. All prices in <b>TZS</b>.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="shop">
+  <div class="container">
+    <h2>Shop Sanitary Ware</h2>
+    <div class="muted">Toilets, basins, mixers, showers, and accessories.</div>
+
+    <div class="toolbar">
+      <input class="input search" id="q" placeholder="Search (e.g., 'toilet', 'mixer', 'shower')">
+      <div style="display:flex;gap:8px">
+        <select class="input" id="cat" style="width:180px">
+          <option value="">All categories</option>
+          <option>Toilets</option><option>Basins</option><option>Mixers</option>
+          <option>Showers</option><option>Accessories</option>
+        </select>
+        <button class="btn btn-muted" id="reset"><i class="bi bi-x-circle"></i> Reset</button>
+      </div>
+    </div>
+
+    <div class="catalog" id="catalog"></div>
+  </div>
+</section>
+
+<section class="section" id="checkout">
+  <div class="container">
+    <h2>Checkout</h2>
+    <div class="grid" style="grid-template-columns:1.2fr 1fr">
+      <div class="card">
+        <h3 style="margin:6px 0 10px">Delivery & Payment</h3>
+        <div class="form-row">
+          <input class="input" id="c_name" placeholder="Full Name">
+          <input class="input" id="c_phone" placeholder="Phone (WhatsApp)">
+        </div>
+        <div class="form-row">
+          <input class="input" id="c_address" placeholder="Delivery Address">
+          <select class="input" id="c_payment">
+            <option value="selcom">Selcom (Mobile Money / Card) — mock</option>
+            <option value="cod">Cash on Delivery — mock</option>
+          </select>
+        </div>
+
+        <div class="card" style="background:#f8ffff;border-color:#d1faf5">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+            <div>
+              <b>Need a Fundi?</b>
+              <div class="mini">Select “Yes” to add preferred time & location</div>
+            </div>
+            <select class="input" id="needFundi" style="width:120px">
+              <option>No</option><option>Yes</option>
+            </select>
+          </div>
+          <div id="fundiExtra" style="display:none;margin-top:10px" class="grid">
+            <input class="input" id="fu_location" placeholder="Mahali pa kazi (eneo/jiji)">
+            <input class="input" id="fu_time" placeholder="Muda unaopendelea (mf. Jumamosi 10:00)">
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="placeOrder"><i class="bi bi-bag-check"></i> Place Order (Mock)</button>
+        <div class="mini" id="orderMsg"></div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:6px 0 10px">Order Summary</h3>
+        <div id="summary"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:10px;font-weight:700">
+          <div>Total</div><div id="summaryTotal">TZS 0</div>
+        </div>
+        <div class="mini" style="margin-top:8px">Payment via <b>Selcom</b> shows as the default option (demo only).</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="contact">
+  <div class="container grid" style="grid-template-columns:1fr 1fr">
+    <div class="card">
+      <h3>Contact Us</h3>
+      <div class="grid">
+        <input class="input" placeholder="Your Email">
+        <input class="input" placeholder="Subject">
+        <textarea class="input" rows="4" placeholder="Message"></textarea>
+        <button class="btn btn-outline"><i class="bi bi-send"></i> Send (mock)</button>
+      </div>
+      <div class="mini" style="margin-top:8px">
+        <i class="bi bi-telephone"></i> +255 7XX XXX XXX &nbsp; • &nbsp;
+        <i class="bi bi-envelope"></i> hello@sanicare.tz
+      </div>
+    </div>
+    <div class="card">
+      <h3>FAQ</h3>
+      <div class="faq">
+        <details open><summary>Do you deliver nationwide?</summary><div class="mini">Yes — demo text. Real coverage depends on logistics partner.</div></details>
+        <details><summary>Which payments are supported?</summary><div class="mini">Selcom (Mobile Money & Cards) in production. This demo uses mock checkout.</div></details>
+        <details><summary>Can I request a fundi/installer?</summary><div class="mini">Yes, toggle “Need a Fundi?” at checkout and add details.</div></details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">© <span id="yr"></span> Sanicare Demo. For evaluation only.</div>
+</footer>
+
+<!-- Cart Drawer -->
+<aside class="drawer" id="drawer">
+  <header class="nav container">
+    <div style="font-weight:800"><i class="bi bi-bag"></i> Your Cart</div>
+    <button class="btn btn-muted" id="closeCart"><i class="bi bi-x-lg"></i> Close</button>
+  </header>
+  <div class="content" id="cartLines"></div>
+  <div class="checkout">
+    <div style="display:flex;justify-content:space-between"><div>Subtotal</div><div id="cartSubtotal">TZS 0</div></div>
+    <button class="btn btn-primary" onclick="document.querySelector('#drawer').classList.remove('open');document.querySelector('#checkout').scrollIntoView({behavior:'smooth'});"><i class="bi bi-credit-card"></i> Go to Checkout</button>
+  </div>
+</aside>
+
+<!-- Chat -->
+<div class="chatfab" id="chatFab"><i class="bi bi-chat-dots"></i></div>
+<div class="chatbox" id="chatBox">
+  <div class="chat-head"><i class="bi bi-headset"></i> Chat Support</div>
+  <div class="msgs" id="msgs">
+    <div class="bubble them">Habari! Karibu Sanicare. Tunawezaje kukusaidia?</div>
+  </div>
+  <div class="chat-input">
+    <input class="input" id="chatInput" placeholder="Andika ujumbe...">
+    <button class="btn btn-primary" id="chatSend"><i class="bi bi-arrow-right"></i></button>
+  </div>
+</div>
+
+<!-- Admin Modal -->
+<div class="modal" id="adminModal">
+  <div class="sheet">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <h3 style="margin:0">Admin Preview (Mock)</h3>
+      <button class="btn btn-muted" id="closeAdmin"><i class="bi bi-x"></i> Close</button>
+    </div>
+    <h4 style="margin:8px 0 4px">Captured Leads</h4>
+    <table class="table" id="leadTable">
+      <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Location</th><th>Baths</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <h4 style="margin:12px 0 4px">Orders (last session)</h4>
+    <table class="table" id="orderTable">
+      <thead><tr><th>Customer</th><th>Phone</th><th>Total (TZS)</th><th>Payment</th><th>Fundi?</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  // -------- Dummy Products (TZS) ----------
+  const PRODUCTS = [
+    {id:1, name:"EcoFlush Toilet (Dual-Flush)", cat:"Toilets", price: 320000, img:"1.jpg"},
+    {id:2, name:"Slim Basin Sink 55cm", cat:"Basins", price: 180000, img:"2.jpeg"},
+    {id:3, name:"Chrome Basin Mixer", cat:"Mixers", price: 145000, img:"3.jpeg"},
+    {id:4, name:"Rain Shower Set", cat:"Showers", price: 420000, img:"1.jpg"},
+    {id:5, name:"Concealed Cistern", cat:"Accessories", price: 260000, img:"3.jpeg"},
+    {id:6, name:"Wall-Hung Toilet", cat:"Toilets", price: 540000, img:"2.jpeg"},
+    {id:7, name:"Countertop Basin 45cm", cat:"Basins", price: 210000, img:"1.jpg"},
+    {id:8, name:"Thermostatic Shower Mixer", cat:"Mixers", price: 390000, img:"3.jpeg"},
+  ];
+
+  // -------- Utilities ----------
+  const TZS = n => "TZS " + n.toLocaleString("en-TZ");
+  const getStore = (k, fallback) => JSON.parse(localStorage.getItem(k) || JSON.stringify(fallback));
+  const setStore = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+
+  // -------- Lead Form ----------
+  const leadKeys = ["f_name","f_phone","f_email","f_location","f_bath"];
+  function saveLead(){
+    const lead = Object.fromEntries(leadKeys.map(id => [id.replace("f_",""), document.getElementById(id).value.trim()]));
+    const leads = getStore("leads",[]);
+    if(!lead.name || !lead.phone){ msg("leadMsg","Tafadhali weka angalau Jina na Simu.","#b91c1c"); return; }
+    leads.push({...lead, ts: Date.now()}); setStore("leads",leads);
+    msg("leadMsg","Asante! Taarifa zimehifadhiwa.","#065f46");
+    // also prefill checkout name/phone
+    document.getElementById("c_name").value = lead.name;
+    document.getElementById("c_phone").value = lead.phone;
+  }
+  function msg(el, text, color){ const m=document.getElementById(el); m.textContent=text; m.style.color=color||"#334155"; setTimeout(()=>m.textContent="",4000); }
+
+  // -------- Catalog + Cart ----------
+  let CART = getStore("cart",[]);
+  function renderCatalog(list=PRODUCTS){
+    const root = document.getElementById("catalog"); root.innerHTML="";
+    list.forEach(p=>{
+      const card = document.createElement("div"); card.className="card product";
+      card.innerHTML = `
+        <div class="thumb"><img src="${p.img}" alt="${p.name}"></div>
+        <div class="title">${p.name}</div>
+        <div class="mini">${p.cat}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px">
+          <div class="price">${TZS(p.price)}</div>
+          <div class="qty">
+            <button class="btn btn-muted" aria-label="decrease" onclick="changeQty(${p.id},-1)"><i class="bi bi-dash"></i></button>
+            <span id="qty-${p.id}">${(CART.find(i=>i.id===p.id)||{}).qty||0}</span>
+            <button class="btn btn-muted" aria-label="increase" onclick="changeQty(${p.id},1)"><i class="bi bi-plus"></i></button>
+          </div>
+        </div>
+        <button class="btn btn-primary" style="margin-top:8px" onclick="addToCart(${p.id})"><i class="bi bi-bag-plus"></i> Add</button>
+      `;
+      root.appendChild(card);
+    });
+  }
+  function changeQty(id,delta){
+    const el = document.getElementById("qty-"+id);
+    let v = Math.max(0, +el.textContent + delta);
+    el.textContent = v;
+  }
+  function addToCart(id){
+    const qty = +document.getElementById("qty-"+id).textContent || 1;
+    const p = PRODUCTS.find(x=>x.id===id);
+    const existing = CART.find(i=>i.id===id);
+    if(existing) existing.qty += qty; else CART.push({id:p.id, name:p.name, price:p.price, img:p.img, qty});
+    setStore("cart",CART); renderCart(); msg("leadMsg","Kipengee kimeongezwa kwenye Cart.", "#065f46");
+  }
+  function renderCart(){
+    const lines = document.getElementById("cartLines"); lines.innerHTML="";
+    let subtotal=0;
+    CART.forEach((it,ix)=>{
+      subtotal += it.price*it.qty;
+      const row = document.createElement("div"); row.className="cart-line";
+      row.innerHTML = `
+        <img src="${it.img}" alt="${it.name}">
+        <div>
+          <div style="font-weight:600">${it.name}</div>
+          <div class="mini">${TZS(it.price)} • Qty
+            <button class="btn btn-muted" style="padding:2px 8px" onclick="cartQty(${ix},-1)"><i class="bi bi-dash"></i></button>
+            ${it.qty}
+            <button class="btn btn-muted" style="padding:2px 8px" onclick="cartQty(${ix},1)"><i class="bi bi-plus"></i></button>
+          </div>
+        </div>
+        <div>
+          <div style="text-align:right">${TZS(it.price*it.qty)}</div>
+          <button class="btn btn-muted" style="margin-top:6px" onclick="removeLine(${ix})"><i class="bi bi-trash"></i></button>
+        </div>`;
+      lines.appendChild(row);
+    });
+    document.getElementById("cartSubtotal").textContent = TZS(subtotal);
+    // summary on checkout
+    const sum = document.getElementById("summary"); sum.innerHTML="";
+    CART.forEach(it=>{
+      const d = document.createElement("div");
+      d.style="display:flex;justify-content:space-between;margin-bottom:6px";
+      d.innerHTML = `<div>${it.name} × ${it.qty}</div><div>${TZS(it.price*it.qty)}</div>`;
+      sum.appendChild(d);
+    });
+    document.getElementById("summaryTotal").textContent = TZS(subtotal);
+  }
+  function cartQty(ix,delta){
+    CART[ix].qty += delta; if(CART[ix].qty<1) CART.splice(ix,1);
+    setStore("cart",CART); renderCart(); renderCatalog();
+  }
+  function removeLine(ix){ CART.splice(ix,1); setStore("cart",CART); renderCart(); renderCatalog(); }
+
+  // -------- Search/Filter ----------
+  function applyFilter(){
+    const q = document.getElementById("q").value.toLowerCase();
+    const cat = document.getElementById("cat").value;
+    const list = PRODUCTS.filter(p=>{
+      const m1 = !q || p.name.toLowerCase().includes(q);
+      const m2 = !cat || p.cat===cat;
+      return m1 && m2;
+    });
+    renderCatalog(list);
+  }
+
+  // -------- Checkout / Order (Mock) ----------
+  function placeOrder(){
+    if(CART.length===0){ msg("orderMsg","Your cart is empty.","#b91c1c"); return; }
+    const name = document.getElementById("c_name").value.trim();
+    const phone = document.getElementById("c_phone").value.trim();
+    if(!name || !phone){ msg("orderMsg","Please add Name & Phone.","#b91c1c"); return; }
+    const payment = document.getElementById("c_payment").value;
+    const fundi = document.getElementById("needFundi").value === "Yes";
+    const total = CART.reduce((a,c)=>a+c.price*c.qty,0);
+    const orders = getStore("orders",[]);
+    orders.push({name, phone, total, payment, fundi, ts:Date.now()});
+    setStore("orders",orders);
+    CART=[]; setStore("cart",CART); renderCart(); renderCatalog();
+    msg("orderMsg","Order placed (mock). In production, Selcom checkout would start now.","#065f46");
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  // -------- Chat (mock bot) ----------
+  function addMsg(text, me=false){
+    const wrap = document.createElement("div");
+    wrap.className = "bubble " + (me?"me":"them");
+    wrap.textContent = text;
+    document.getElementById("msgs").appendChild(wrap);
+    const box = document.getElementById("msgs"); box.scrollTop = box.scrollHeight;
+  }
+  function botReply(q){
+    const t = q.toLowerCase();
+    if(t.includes("bei")||t.includes("price")) return "Bidhaa nyingi zetu zipo kuanzia TZS 145,000 hadi 540,000.";
+    if(t.includes("delivery")) return "Tunasafirisha kwenye mikoa mingi — gharama hutegemea eneo.";
+    if(t.includes("fundi")) return "Ndiyo, unaweza kuchagua 'Need a Fundi?' kwenye Checkout.";
+    return "Asante kwa ujumbe! Tutakujibu mara tu.";
+  }
+
+  // -------- Admin Preview ----------
+  function openAdmin(){
+    // Leads
+    const leads = getStore("leads",[]);
+    const tb = document.querySelector("#leadTable tbody"); tb.innerHTML="";
+    leads.slice(-50).reverse().forEach(l=>{
+      const tr=document.createElement("tr");
+      tr.innerHTML=`<td>${l.name||""}</td><td>${l.phone||""}</td><td>${l.email||""}</td><td>${l.location||""}</td><td>${l.bath||""}</td>`;
+      tb.appendChild(tr);
+    });
+    // Orders
+    const orders = getStore("orders",[]);
+    const tb2 = document.querySelector("#orderTable tbody"); tb2.innerHTML="";
+    orders.slice(-50).reverse().forEach(o=>{
+      const tr=document.createElement("tr");
+      tr.innerHTML=`<td>${o.name}</td><td>${o.phone}</td><td>${o.total.toLocaleString("en-TZ")}</td><td>${o.payment}</td><td>${o.fundi?"Yes":"No"}</td>`;
+      tb2.appendChild(tr);
+    });
+    document.getElementById("adminModal").classList.add("open");
+  }
+
+  // -------- Events & Init ----------
+  // lead save
+  document.getElementById("saveLead").addEventListener("click", saveLead);
+  // cart drawer
+  document.getElementById("openCart").addEventListener("click", ()=>document.getElementById("drawer").classList.add("open"));
+  document.getElementById("closeCart").addEventListener("click", ()=>document.getElementById("drawer").classList.remove("open"));
+  // filters
+  document.getElementById("q").addEventListener("input", applyFilter);
+  document.getElementById("cat").addEventListener("change", applyFilter);
+  document.getElementById("reset").addEventListener("click", ()=>{document.getElementById("q").value="";document.getElementById("cat").value="";applyFilter();});
+  // fundi toggle
+  document.getElementById("needFundi").addEventListener("change", e=>{
+    document.getElementById("fundiExtra").style.display = e.target.value==="Yes" ? "block":"none";
+  });
+  // place order
+  document.getElementById("placeOrder").addEventListener("click", placeOrder);
+  // chat
+  document.getElementById("chatFab").addEventListener("click", ()=>document.getElementById("chatBox").classList.toggle("open"));
+  document.getElementById("chatSend").addEventListener("click", ()=>{
+    const inp=document.getElementById("chatInput"); const v=inp.value.trim(); if(!v) return;
+    addMsg(v,true); inp.value="";
+    setTimeout(()=>addMsg(botReply(v),false), 500);
+  });
+  // admin
+  document.getElementById("openAdmin").addEventListener("click", (e)=>{e.preventDefault(); openAdmin();});
+  document.getElementById("closeAdmin").addEventListener("click", ()=>document.getElementById("adminModal").classList.remove("open"));
+  // date
+  document.getElementById("yr").textContent = new Date().getFullYear();
+
+  // initial render
+  renderCatalog(); renderCart();
+</script>
+</body>
+</html>
